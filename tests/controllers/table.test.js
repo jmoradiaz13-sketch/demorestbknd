@@ -44,4 +44,13 @@ describe('Table Controller - salones', () => {
     expect(zona(5)).toBe('Salón 1');
     expect(zona(12)).toBe('Salón 2');
   });
+
+  it('should backfill libre on tables created before status existed', async () => {
+    // Inserción cruda sin status: simula documentos viejos que se ven sin texto en el mapa
+    await Table.collection.insertOne({ number: 7 });
+    const res = await request(app).get('/api/tables').set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.find(t => t.number === 7).status).toBe('libre');
+    expect(await Table.findOne({ number: 7 }).then(t => t.status)).toBe('libre');
+  });
 });

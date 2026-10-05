@@ -52,6 +52,21 @@ exports.getAll = async (req, res, next) => {
           .populate({ path: 'currentReservation', select: 'customerName numberOfPeople date notes status' })
           .lean();
       }
+      // Backfill de status: mesas viejas sin estado quedan en blanco en el mapa.
+      // Se hace directo en BD porque el default del schema ocultaría los faltantes al leer.
+      const sinStatusCount = await Table.countDocuments({
+        $or: [{ status: { $exists: false } }, { status: null }, { status: '' }]
+      });
+      if (sinStatusCount > 0) {
+        await Table.updateMany(
+          { $or: [{ status: { $exists: false } }, { status: null }, { status: '' }] },
+          { $set: { status: 'libre' } }
+        );
+        tables = await Table.find().sort({ number: 1 })
+          .populate({ path: 'currentSale', select: 'total createdAt' })
+          .populate({ path: 'currentReservation', select: 'customerName numberOfPeople date notes status' })
+          .lean();
+      }
     }
 
     res.json(tables);
