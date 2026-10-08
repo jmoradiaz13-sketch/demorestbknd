@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
   amount: { type: Number, required: true, min: 0 },
-  method: { type: String, enum: ['efectivo', 'transferencia', 'mixto'], default: 'efectivo' },
+  method: { type: String, enum: ['efectivo', 'tarjeta', 'transferencia', 'mixto'], default: 'efectivo' },
   milestone: { type: mongoose.Schema.Types.ObjectId, default: null },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   date: { type: Date, default: Date.now }

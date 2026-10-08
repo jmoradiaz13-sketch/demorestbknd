@@ -33,7 +33,7 @@ const saleSchema = new mongoose.Schema({
   dishItems: [saleDishItemSchema],
   total: { type: Number, required: true, min: 0 },
   status: { type: String, enum: ['pendiente', 'pagada', 'cancelada'], default: 'pagada' },
-  paymentMethod: { type: String, enum: ['efectivo', 'transferencia', 'mixto'], default: 'efectivo' },
+  paymentMethod: { type: String, enum: ['efectivo', 'tarjeta', 'transferencia', 'mixto'], default: 'efectivo' },
   customerName: { type: String, default: 'Cliente general' },
   notes: { type: String, default: '' },
   // El inventario se descuenta al cobrar (pay), no al registrar.
